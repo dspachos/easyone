@@ -1,0 +1,78 @@
+<?php
+
+/**
+ * @file
+ * Enable Parallax effect for any block created by the user
+ *
+ * This module enables the user to select none, Same, or Opposite directions
+ * when creating a block. Selecting Same or Opposite places a data attribute
+ * which is ready by the attached javascript file, and then targeted for
+ * calculations causing parallax effect based on 'same' or 'opposite' value.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function easyone_wow_block_info() {
+  // This example comes from node.module.
+  /*
+   *$blocks['syndicate'] = array(
+   *  'info' => t('Syndicate'),
+   *  'cache' => DRUPAL_NO_CACHE
+   *);
+   */
+
+  $blocks['easyone_wow'] = array(
+    'info' => t('EasyOne WOW example'),
+    'cache' => DRUPAL_NO_CACHE
+  );
+
+  return $blocks;
+}
+
+
+
+/**
+ * Implements hook_block_view().
+ */
+function easyone_wow_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'easyone_wow':
+      $block['subject'] = t('WOW example');
+
+      $block['content'] = '<div class="row col-md-12 text-center">';
+      $block['content'] .= '<div class="wow flip" data-wow-delay="2s" ><h1><i class="text-warning fa fa-check-circle-o"></i> EasyOne Drupal 7 theme!</h1></div><p></p>';
+      $block['content'] .= '<div class="wow slideInLeft" data-wow-delay="0s" ><h1><i class="text-warning glyphicon glyphicon-check"></i> Mobile first!</h1></div>';
+      $block['content'] .= '<div class="wow slideInLeft" data-wow-delay="0.5s" ><h1><i class="text-info glyphicon glyphicon-check"></i> Responsive!</h1></div>';
+      $block['content'] .= '<div class="wow slideInLeft" data-wow-delay="1s" ><h1><i class="text-danger glyphicon glyphicon-check"></i> Easy to use!</h1></div>';
+      $block['content'] .= '<div class="wow flipInX" ><span class="fa-stack fa-lg">
+                            <i class="text-danger fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-flag fa-stack-1x fa-inverse"></i>
+                          </span></div>';
+      $block['content'] .= '</div>';
+
+      break;
+    
+  }
+  return $block;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

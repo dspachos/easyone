@@ -1,0 +1,7 @@
+name = EasyOne WOW plugin
+description = Integration of WOW CSS animation library with Drupal.
+core = 7.x
+stylesheets[all][] = animate.css
+scripts[] = wow.min.js
+scripts[] = jquery.wow.init.js
+dependencies[] = block

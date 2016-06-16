@@ -1,0 +1,191 @@
+<?php
+
+/**
+ * @file
+ * Enable Parallax effect for any block created by the user
+ *
+ * This module enables the user to select none, Same, or Opposite directions
+ * when creating a block. Selecting Same or Opposite places a data attribute
+ * which is ready by the attached javascript file, and then targeted for
+ * calculations causing parallax effect based on 'same' or 'opposite' value.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function easyone_social_block_info() {
+  // This example comes from node.module.
+  /*
+   *$blocks['syndicate'] = array(
+   *  'info' => t('Syndicate'),
+   *  'cache' => DRUPAL_NO_CACHE
+   *);
+   */
+
+  $blocks['easyone_social'] = array(
+    'info' => t('EasyOne Social'),
+    'cache' => DRUPAL_NO_CACHE
+  );
+
+  return $blocks;
+}
+
+
+
+/**
+ * Implements hook_requirements().
+ */
+function easyone_social_requirements($phase) {
+  $requirements = array();
+
+  $t = get_t();
+  /*
+   *  // Ensure translations don't break at install time
+   *
+   *  // Report Drupal version
+   *  if ($phase == 'runtime') {
+   *    $requirements['drupal'] = array(
+   *      'title' => $t('Drupal'),
+   *      'value' => VERSION,
+   *      'severity' => REQUIREMENT_INFO
+   *    );
+   *  }
+   *
+   *  // Test PHP version
+   *  $requirements['php'] = array(
+   *    'title' => $t('PHP'),
+   *    'value' => ($phase == 'runtime') ? l(phpversion(), 'admin/logs/status/php') : phpversion(),
+   *  );
+   *  if (version_compare(phpversion(), DRUPAL_MINIMUM_PHP) < 0) {
+   *    $requirements['php']['description'] = $t('Your PHP installation is too old. Drupal requires at least PHP %version.', array('%version' => DRUPAL_MINIMUM_PHP));
+   *    $requirements['php']['severity'] = REQUIREMENT_ERROR;
+   *  }
+   *
+   *  // Report cron status
+   *  if ($phase == 'runtime') {
+   *    $cron_last = variable_get('cron_last');
+   *
+   *    if (is_numeric($cron_last)) {
+   *      $requirements['cron']['value'] = $t('Last run !time ago', array('!time' => format_interval(REQUEST_TIME - $cron_last)));
+   *    }
+   *    else {
+   *      $requirements['cron'] = array(
+   *        'description' => $t('Cron has not run. It appears cron jobs have not been setup on your system. Check the help pages for <a href="@url">configuring cron jobs</a>.', array('@url' => 'http://drupal.org/cron')),
+   *        'severity' => REQUIREMENT_ERROR,
+   *        'value' => $t('Never run'),
+   *      );
+   *    }
+   *
+   *    $requirements['cron']['description'] .= ' ' . t('You can <a href="@cron">run cron manually</a>.', array('@cron' => url('admin/logs/status/run-cron')));
+   *
+   *    $requirements['cron']['title'] = $t('Cron maintenance tasks');
+   *  }
+   */
+  /* Your code here */
+
+  if ($phase == 'runtime') {
+
+    if(theme_get_setting('use_foundation_icons', 'easyone')) {
+
+       $requirements['fontawesome'] = array(
+         'title' => $t('Foundation icons'),
+         'value' => $t('Enabled'),
+         'description' => 'Required by EasyOne Social module. You can enable or disable Foundation icons in EasyOne theme <a href="'.url('admin/appearance/settings/easyone').'">settings page.</a>.',
+           'severity' => REQUIREMENT_OK,
+       );
+
+     } else {
+
+       $requirements['fontawesome'] = array(
+         'title' => $t('Foundation icons'),
+         'value' => $t('Disabled'),
+         'description' => 'Required by EasyOne Social module. You can enable or disable Foundation icons in EasyOne theme <a href="'.url('admin/appearance/settings/easyone').'">settings page.</a>.',
+           'severity' => REQUIREMENT_INFO,
+       );
+
+      if( $theme_path = drupal_get_path('theme', 'easyone') ) {
+          $found_icons = $theme_path . '/foundation-icons/foundation-icons.css';
+          $css[$found_icons] = array(
+            'data' => $found_icons,
+            'type' => 'file',
+            'every_page' => TRUE,
+            'media' => 'all',
+            'preprocess' => TRUE,
+            'group' => CSS_THEME,
+            'browsers' => array('IE' => TRUE, '!IE' => TRUE),
+            'weight' => 1040,
+          );
+          drupal_add_css($css);
+      }//end if
+
+
+
+
+     }//end if
+
+  }//end if
+
+
+  return $requirements;
+}
+
+
+/**
+ * Implements hook_block_view().
+ */
+function easyone_social_block_view($delta = '') {
+  $block = array();
+
+
+global $theme;
+
+  switch ($delta) {
+    case 'easyone_social':
+      $block['subject'] = t('Follow us');
+
+      $str='<ul class="menu list-inline text-center easyone-social wow fadeIn">';
+
+      if(theme_get_setting('social_fb','easyone')) {
+        $str.='<li><a href="'.theme_get_setting('social_fb').'" title="'.theme_get_setting('social_fb').'" ><i class="fi-social-facebook fa-3x"></i></a></li>';
+      }
+
+      if(theme_get_setting('social_twitter')) {
+        $str.='<li><a href="'.theme_get_setting('social_twitter').'" title="'.theme_get_setting('social_twitter').'"><i class="fi-social-twitter fa-3x"></i></a></li>';
+      }
+
+      if(theme_get_setting('social_gplus')) {
+        $str.='<li><a href="'.theme_get_setting('social_gplus').'" title="'.theme_get_setting('social_gplus').'"><i class="fi-social-google-plus fa-3x"></i></a></li>';
+      }
+
+      if(theme_get_setting('social_youtube')) {
+        $str.='<li><a href="'.theme_get_setting('social_youtube').'" title="'.theme_get_setting('social_youtube').'"><i class="fi-social-youtube fa-3x"></i></a></li>';
+      }
+
+      if(theme_get_setting('social_linkedin')) {
+        $str.='<li><a href="'.theme_get_setting('social_linkedin').'" title="'.theme_get_setting('social_linkedin').'"><i class="fi-social-linkedin fa-3x"></i></a></li>';
+      }
+
+      if(theme_get_setting('social_instagram')) {
+        $str.='<li><a href="'.theme_get_setting('social_instagram').'" title="'.theme_get_setting('social_instagram').'"><i class="fi-social-instagram fa-3x"></i></a></li>';
+      }
+
+      if(theme_get_setting('social_pintertest')) {
+        $str.='<li><a href="'.theme_get_setting('social_pintertest').'" title="'.theme_get_setting('social_pintertest').'"><i class="fi-social-pintertest fa-3x"></i></a></li>';
+      }
+
+      $str.='</ul>';
+      $block['content'] = $str;
+
+
+      if(!$theme=='easyone') {
+        $block['content'] = '<span class="label label-danger"><strong>ATTENTION:</strong></span> EasyOne theme is required to use this module.';
+      }//end if
+
+      break;
+    
+  }
+  return $block;
+}
+
+
+

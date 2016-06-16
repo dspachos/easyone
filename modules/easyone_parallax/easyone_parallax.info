@@ -1,0 +1,7 @@
+name = EasyOne Parallax
+description = Provides parallax background effect for all blocks.
+core = 7.x
+package = EasyOne
+stylesheets[all][] = easyone_parallax.css
+scripts[] = jquery.scrolly.js
+dependencies[] = block

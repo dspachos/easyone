@@ -1,0 +1,8 @@
+name = EasyOne Map
+description = Provides a map block.
+core = 7.x
+package = EasyOne
+stylesheets[all][] = easyone_map.css
+scripts[] = jquery.classymap.min.js
+scripts[] = jquery.classymap.init.js
+dependencies[] = block

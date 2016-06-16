@@ -1,0 +1,268 @@
+<?php
+
+/**
+ * @file
+ * Enable Parallax effect for any block created by the user
+ *
+ * This module enables the user to select none, Same, or Opposite directions
+ * when creating a block. Selecting Same or Opposite places a data attribute
+ * which is ready by the attached javascript file, and then targeted for
+ * calculations causing parallax effect based on 'same' or 'opposite' value.
+ */
+
+/**
+ * Implements theme_preprocess_block().
+ */
+function easyone_parallax_preprocess_block(&$vars) {
+  $block = $vars['block'];
+  if( get_block_use_parallax($block->bid,$block->delta) ) {
+    $vars['classes_array'][] = 'parallax-block';
+ }//end if
+
+ }//end function
+
+
+/**
+ * Implements hook_form_alter().
+ */
+function easyone_parallax_form_alter(&$form, &$form_state, $form_id) {
+
+  if (($form_id == 'block_admin_configure') || ($form_id == 'block_add_block_form')) {
+
+    $block = block_load($form['module']['#value'], $form['delta']['#value']);
+
+//    dpm($block);
+if( isset($block->bid) ) {
+  $bid = $block->bid;
+    $delta = $block->delta;
+} else {
+  $bid=0;
+  $delta=0;
+}
+
+    $options = array(
+      'none' => 'None',
+      'same' => 'Same Direction (fast effect)',
+      'opposite' => 'Opposite Direction (slow effect)',
+    );
+
+  $form['parallax'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Parallax'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+
+  $form['parallax']['use_parallax'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use parallax on this block'),
+    '#default_value' => get_block_use_parallax($bid,$delta),
+  );
+
+  $form['parallax']['parallax_bid'] = array(
+    '#type' => 'hidden',
+    '#value' => $bid,
+  );
+
+
+
+    $form['parallax']['parallax_file_bottom'] = array(
+          '#type' => 'managed_file',
+          '#title' => t('Parallax image'),
+          '#description' => t('The image file for the bottom parallax layer.'),
+          '#progress_indicator' => 'bar',
+          '#upload_location' => 'public://parallax',
+          '#default_value' => get_block_fid($bid,$delta),
+       );
+
+      $form['parallax']['velocity'] = array(
+        '#type' => 'textfield',
+        '#size' => 4,
+        '#title' => t('Velocity'),
+        '#default_value' => get_block_velocity($bid,$delta),
+        '#element_validate' => array('element_validate_integer'), 
+          '#description' => t('Defines the speed of the parallax image moving. Must be a possitive integer between 1-100'),
+      );
+
+      $form['parallax']['topoffset'] = array(
+        '#type' => 'textfield',
+        '#size' => 8,
+        '#title' => t('Top offset'),
+        '#field_suffix' => 'px',
+        '#default_value' => get_block_offset($bid,$delta),
+        '#element_validate' => array('element_validate_integer'), 
+          '#description' => t('Defines the offset in pixels position of the background image, related to the top of the block. Must be a positive integer.'),
+      );
+
+
+  $form['#submit'][] = 'easyone_parallax_form_submit';
+  }
+}
+
+
+
+function easyone_parallax_block_view_alter(&$data, $block) {
+      $bid = $block->bid;
+      $delta = $block->delta;
+
+    $fid = get_block_fid($bid,$delta);
+    $vel = get_block_velocity($bid,$delta);
+    $offset = get_block_offset($bid,$delta);
+
+    if($file=file_load($fid)) {
+      $fullpath = file_create_url($file->uri);
+      $oDiv = '<div class="parallax" data-velocity=".'.$vel.'" style="background:url('.$fullpath.') 50% 0 repeat-y fixed;top: -'.$offset.'px"></div>';
+      if( get_block_use_parallax($bid,$delta) ){
+          
+          if( is_array($data['content']) ) {
+
+              if(isset($data['content']['#node']) ) { 
+                $data['content']['#node']->body['und'][0]['value'] .= $oDiv ;
+              } 
+              if ( isset($data['content']['#markup']) ) {
+                $data['content']['#markup'] .= $oDiv ; 
+              }//end if
+
+           } else {
+            $data['content'] .= $oDiv; 
+          } //end else            
+      
+     }//end if
+    }//end if
+}//end function
+
+
+
+
+function get_block_use_parallax($bid,$delta) {
+$val=0;
+
+if($bid>0) {
+$val = db_select('block', 'b')
+    ->fields('b',array('use_parallax'))
+    ->condition('bid', $bid,'=')
+    ->condition('delta', $delta,'=')
+    ->execute()
+    ->fetchAssoc();
+
+//    dpm($val['use_parallax'][0]);
+
+  return $val['use_parallax'][0];
+}
+
+return $val;
+}//end function
+
+
+
+function get_block_fid($bid,$delta) {
+$val=0;
+
+if($bid>0) {
+$val = db_select('block', 'b')
+    ->fields('b',array('fid'))
+    ->condition('bid', $bid,'=')
+    ->condition('delta', $delta,'=')
+    ->execute()
+    ->fetchAssoc();
+
+  return $val['fid'];
+}
+return $val;
+}//end function
+
+
+function get_block_velocity($bid,$delta) {
+$val=0;
+
+if($bid>0) {
+$val = db_select('block', 'b')
+    ->fields('b',array('vel'))
+    ->condition('bid', $bid,'=')
+    ->condition('delta', $delta,'=')
+    ->execute()
+    ->fetchAssoc();
+
+//    drupal_set_message('<pre>'.print_r($val,TRUE).'</pre>');
+
+  return $val['vel'];
+}
+return $val;
+}//end function
+
+
+function get_block_offset($bid,$delta) {
+$val=0;
+
+if($bid>0) {
+$val = db_select('block', 'b')
+    ->fields('b',array('offset'))
+    ->condition('bid', $bid,'=')
+    ->condition('delta', $delta,'=')
+    ->execute()
+    ->fetchAssoc();
+
+//    drupal_set_message('<pre>'.print_r($val,TRUE).'</pre>');
+
+  return $val['offset'];
+}
+return $val;
+}//end function
+
+
+
+/**
+ * Helper function: additional submit callback for block configuration pages.
+ */
+function easyone_parallax_form_submit($form, &$form_state) {
+  if ($form_state['values']['form_id'] == 'block_admin_configure' || $form_state['values']['form_id'] == 'block_add_block_form') {
+    // Only save if value has changed
+
+    
+        if($file = file_load($form_state['values']['parallax_file_bottom']) ) {
+            $file->status = 1;
+            file_save($file);
+
+            file_usage_add($file, 'easyone_parallax', 'block', $form_state['values']['parallax_bid']);
+      }//end if
+
+
+  if (isset($form_state['values']['use_parallax']) && user_access('administer blocks')) {
+     
+
+      db_update('block')
+        ->fields(array(
+                      'use_parallax' => $form_state['values']['use_parallax'], 
+                      'fid' => ( $form_state['values']['parallax_file_bottom']>=0 ? $form_state['values']['parallax_file_bottom'] : 0), 
+                      'vel' => ( $form_state['values']['velocity']>=0 ? $form_state['values']['velocity'] : 0), 
+                      'offset' => ( $form_state['values']['topoffset']>=0 ? $form_state['values']['topoffset'] : 0), 
+          ))
+        ->condition('module', $form_state['values']['module'])
+        ->condition('delta', $form_state['values']['delta'])
+        ->execute();
+
+      if (module_exists('context')) {
+        cache_clear_all('context', 'cache', TRUE);
+      }//end if
+
+    } //end if
+  }//end if
+}//end function
+
+
+
+/*
+
+<?php 
+  // add inline javascript
+  drupal_add_js("
+   jQuery(document).ready(function() {
+    jQuery('.parallax').scrolly({bgParallax: true});
+    });", 'inline');
+?>
+
+
+
+*/
+
+

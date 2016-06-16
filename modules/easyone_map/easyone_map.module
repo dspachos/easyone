@@ -1,0 +1,126 @@
+<?php
+
+/**
+ * @file
+ * Enable Parallax effect for any block created by the user
+ *
+ * This module enables the user to select none, Same, or Opposite directions
+ * when creating a block. Selecting Same or Opposite places a data attribute
+ * which is ready by the attached javascript file, and then targeted for
+ * calculations causing parallax effect based on 'same' or 'opposite' value.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function easyone_map_block_info() {
+  // This example comes from node.module.
+  /*
+   *$blocks['syndicate'] = array(
+   *  'info' => t('Syndicate'),
+   *  'cache' => DRUPAL_NO_CACHE
+   *);
+   */
+
+  $blocks['easyone_map'] = array(
+    'info' => t('EasyOne Map'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+
+  return $blocks;
+}
+
+
+
+
+
+function easyone_map_form_alter(&$form, &$form_state, $form_id) {
+
+if (($form_id == 'block_admin_configure') || ($form_id == 'block_add_block_form')) {
+
+    $block = block_load($form['module']['#value'], $form['delta']['#value']);
+
+    if($block->module=='easyone_map' && $block->delta=='easyone_map') {
+      //          dpm($form);
+      //      drupal_set_message("<pre>".print_r($form,TRUE)."</pre>");
+
+    $form['settings']['easyone_map_address'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Address to show on the map'),
+    '#default_value' => variable_get('easyone_map_address'),
+    '#weight' => -10,
+    );
+
+    $form['#submit'][] = 'easyone_map_form_submit';
+
+    }//end if
+
+}//end if
+
+}//end function
+
+
+
+function easyone_map_form_submit($form, &$form_state) {
+
+ if ($form_state['values']['form_id'] == 'block_admin_configure' || $form_state['values']['form_id'] == 'block_add_block_form') {
+
+  //dpm($form_state['values']);
+
+  if( isset($form_state['values']['easyone_map_address']) ) {
+    //dpm('setting value:'.$form_state['values']['easyone_map_address']);
+    variable_set('easyone_map_address', $form_state['values']['easyone_map_address']);
+  }//end if
+
+}//end if
+}//end function
+
+
+
+
+
+
+
+
+/**
+ * Implements hook_block_view().
+ */
+function easyone_map_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'easyone_map':
+      $addr = variable_get('easyone_map_address');
+      $block['subject'] = t('Find us!');
+      $block['content'] = '<div class="row container col-md-12 center-block"><div class="googleMap" 
+                            data-address="'.$addr.'" 
+                            data-description="Description here" 
+                            data-height="500px" 
+                            data-width="100%" 
+                            data-zoom="12" 
+                            data-type="terrain">
+                            </div></div>';
+      break;
+  }
+  return $block;
+}
+
+
+
+
+
+/*
+
+<?php 
+  // add inline javascript
+  drupal_add_js("
+   jQuery(document).ready(function() {
+    jQuery('.parallax').scrolly({bgParallax: true});
+    });", 'inline');
+?>
+
+
+
+*/
+
+

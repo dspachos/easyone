@@ -1,0 +1,7 @@
+name = EasyOne Circle plugin
+description = Provides a statistics plugin/block.
+core = 7.x
+stylesheets[all][] = jquery.circliful.css
+scripts[] = jquery.circliful.min.js
+scripts[] = jquery.circliful.init.js
+dependencies[] = block

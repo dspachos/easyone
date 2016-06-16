@@ -1,0 +1,6 @@
+name = EasyOne Contact
+description = Provides a contact block.
+core = 7.x
+package = EasyOne
+dependencies[] = block
+dependencies[] = contact

@@ -1,0 +1,1 @@
+Modules must be placed in sites/all/modules directory

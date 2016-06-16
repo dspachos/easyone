@@ -1,0 +1,91 @@
+<?php
+
+/**
+ * @file
+ * Enable Parallax effect for any block created by the user
+ *
+ * This module enables the user to select none, Same, or Opposite directions
+ * when creating a block. Selecting Same or Opposite places a data attribute
+ * which is ready by the attached javascript file, and then targeted for
+ * calculations causing parallax effect based on 'same' or 'opposite' value.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function easyone_circle_block_info() {
+  // This example comes from node.module.
+  /*
+   *$blocks['syndicate'] = array(
+   *  'info' => t('Syndicate'),
+   *  'cache' => DRUPAL_NO_CACHE
+   *);
+   */
+
+  $blocks['easyone_circle'] = array(
+    'info' => t('EasyOne Circle'),
+    'cache' => DRUPAL_NO_CACHE
+  );
+
+  return $blocks;
+}
+
+
+
+/**
+ * Implements hook_block_view().
+ */
+function easyone_circle_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'easyone_circle':
+      $block['subject'] = t('Our skills');
+      $block['content'] = '<div class="row container text-center center-block" id="skills">';
+
+      if( theme_get_setting('cs1_value', 'easyone') ) {
+        $val = theme_get_setting('cs1_value', 'easyone');
+        $label = theme_get_setting('cs1_label', 'easyone');
+        $color = '#'.theme_get_setting('cs1_color', 'easyone');
+
+        $block['content'] .= '<div class="col-xs-12 col-sm-6 col-md-3"><div class="easyonecircle" data-text="'.$val.'%" data-info="'.$label.'" data-width="30" data-fontsize="38" data-percent="'.$val.'" data-icon="users" data-fgcolor="'.$color.'" data-bgcolor="#eee"></div></div>';
+      }
+
+      if( theme_get_setting('cs2_value', 'easyone') ) {
+        $val = theme_get_setting('cs2_value', 'easyone');
+        $label = theme_get_setting('cs2_label', 'easyone');
+        $color = '#'.theme_get_setting('cs2_color', 'easyone');
+
+        $block['content'] .= '<div class="col-xs-12 col-sm-6 col-md-3"><div class="easyonecircle" data-text="'.$val.'%" data-info="'.$label.'" data-width="30" data-fontsize="38" data-percent="'.$val.'" data-icon="users" data-fgcolor="'.$color.'" data-bgcolor="#eee"></div></div>';
+      }//end if
+
+      if( theme_get_setting('cs3_value', 'easyone') ) {
+        $val = theme_get_setting('cs3_value', 'easyone');
+        $label = theme_get_setting('cs3_label', 'easyone');
+        $color = '#'.theme_get_setting('cs3_color', 'easyone');
+
+        $block['content'] .= '<div class="col-xs-12 col-sm-6 col-md-3"><div class="easyonecircle" data-text="'.$val.'%" data-info="'.$label.'" data-width="30" data-fontsize="38" data-percent="'.$val.'" data-icon="users" data-fgcolor="'.$color.'" data-bgcolor="#eee"></div></div>';
+      }//end if
+
+      if( theme_get_setting('cs4_value', 'easyone') ) {
+        $val = theme_get_setting('cs4_value', 'easyone');
+        $label = theme_get_setting('cs4_label', 'easyone');
+        $color = '#'.theme_get_setting('cs4_color', 'easyone');
+
+        $block['content'] .= '<div class="col-xs-12 col-sm-6 col-md-3"><div class="easyonecircle" data-text="'.$val.'%" data-info="'.$label.'" data-width="30" data-fontsize="38" data-percent="'.$val.'" data-icon="users" data-fgcolor="'.$color.'" data-bgcolor="#eee"></div></div>';
+      }//end if
+
+
+      $block['content'] .= '</div>';
+
+      break;
+    
+  }
+  return $block;
+}
+
+
+
+
+
+

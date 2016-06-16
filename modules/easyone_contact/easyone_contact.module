@@ -1,0 +1,107 @@
+<?php
+
+/**
+ * @file
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function easyone_contact_block_info() {
+  // This example comes from node.module.
+  /*
+   *$blocks['syndicate'] = array(
+   *  'info' => t('Syndicate'),
+   *  'cache' => DRUPAL_NO_CACHE
+   *);
+   */
+
+  $blocks['easyone_contact'] = array(
+    'info' => t('EasyOne Contact'),
+    'cache' => DRUPAL_NO_CACHE
+  );
+
+  $blocks['easyone_contactinfo_footer'] = array(
+    'info' => t('EasyOne Contact info (small)'),
+    'cache' => DRUPAL_NO_CACHE
+  );
+
+
+  return $blocks;
+}
+
+
+/**
+ * Implements hook_block_view().
+ */
+function easyone_contact_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'easyone_contact':
+      $block['subject'] = t('Contact us!');
+
+      $str='';
+      if(!function_exists('contact_site_page')) {
+        require_once drupal_get_path('module', 'contact').'/contact.pages.inc';
+        $output = drupal_get_form('contact_site_form');
+        $str = drupal_render($output);
+        $block['content'] = '<div class="row container"><div class="col-md-8 wow fadeIn">'.$str.'</div>';
+      }
+
+      $block['content'] .= '<div class="col-md-2 col-md-push-1 wow fadeInRightBig">'.get_addr().'</div></div>';
+
+      break;
+    
+    case 'easyone_contactinfo_footer':
+      $block['subject'] = t('Contact');
+      $block['content'] = '<div class="text-center wow fadeInRightBig">'.get_addr().'</div>';
+      break;
+
+
+  }
+  return $block;
+}
+
+function get_addr(){
+
+  global $theme;
+  $addr='';
+
+      if( theme_get_setting('e1contact_addr_title') ) {
+        $addr = '<address><strong>'.theme_get_setting('e1contact_addr_title').'</strong><br />
+              '.theme_get_setting('e1contact_addr_ln1').'<br />
+              '.theme_get_setting('e1contact_addr_ln2').'<br />'; }//end if
+
+      if( theme_get_setting('e1contact_tel') ) {
+      $addr .='<br /><abbr title="Phone">P:</abbr> '.theme_get_setting('e1contact_tel'); }//end if
+
+      if( theme_get_setting('e1contact_fax') ) {
+      $addr .='<br /><abbr title="Fax">F:</abbr> '.theme_get_setting('e1contact_fax'); }//end if
+
+      $addr .= '</address>';
+
+      if( theme_get_setting('e1contact_person') ) {
+      $addr .='              <address><strong>'.theme_get_setting('e1contact_person').'</strong><br />
+              <a href="mailto:#">'.theme_get_setting('e1contact_person_email').'</a></address>'; }//end if
+
+      $addr .= theme_get_setting('e1contact_other');
+
+      if(!$theme=='easyone') {
+        $addr = '<span class="label label-danger"><strong>ATTENTION:</strong></span> EasyOne theme is required to use this module.';
+      }//end if
+
+  return $addr;
+}//end function
+
+
+
+
+
+
+
+
+
+
+
+

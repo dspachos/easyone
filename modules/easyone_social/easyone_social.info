@@ -1,0 +1,4 @@
+name = EasyOne Social
+description = Provides a social media block.
+core = 7.x
+dependencies[] = block

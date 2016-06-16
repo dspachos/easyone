@@ -1,0 +1,93 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the easyone_parallax module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function easyone_parallax_install() {
+  $schema['block'] = array();
+  parallax_block_schema_alter($schema);
+  foreach ($schema['block']['fields'] as $field => $spec) {
+    if (db_field_exists('block', $field)) {
+      watchdog('system', 'Module install: Attempt to recreate field: "%field", when it already exists.', array('%field' => $field), WATCHDOG_WARNING);
+    }
+    else {
+      db_add_field('block', $field, $spec);
+    }
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function parallax_block_uninstall() {
+  $schema['block'] = array();
+  parallax_block_schema_alter($schema);
+  foreach ($schema['block']['fields'] as $field => $specs) {
+    db_drop_field('block', $field);
+  }
+}
+
+/**
+ * Implements hook_schema_alter().
+ *
+ */
+function parallax_block_schema_alter(&$schema) {
+  if (isset($schema['block'])) {
+    $schema['block']['fields']['use_parallax'] = array(
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => 0,
+      'description' => 'String containing the use of parallax value for the block',
+    );
+
+    $schema['block']['fields']['fid'] = array(
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => 0,
+      'description' => 'The image file that is used',
+    );
+
+    $schema['block']['fields']['vel'] = array(
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => 0,
+      'description' => 'Parallax velocity value',
+    );
+
+    $schema['block']['fields']['offset'] = array(
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => 0,
+      'description' => 'Parallax offset value',
+    );
+
+
+  }
+
+}//end schema alter
+
+
+
+
+
+
+function easyone_parallax_module_update_7100() {
+    db_update('system')
+    ->fields(array('weight' => 999))
+    ->condition('name', 'easyone_parallax', '=')
+    ->execute();
+  }//end function
+
+
+
+
+
+
+
+
+
