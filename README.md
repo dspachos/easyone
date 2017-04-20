@@ -2,8 +2,7 @@
 
 Live demo at: http://snf-254298.vm.okeanos.grnet.gr/easyone/
 
-![Screen shot]
-(Screenshot.png)
+![Screenshot](/Screenshot.png?raw=true "Screenshot")
 
 ## Features
 
