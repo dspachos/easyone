@@ -1,6 +1,6 @@
 # EasyOne Drupal 7 responsive theme
 
-Live demo at: http://snf-254298.vm.okeanos.grnet.gr/easyone/
+See it in action at: http://envira2015.gr
 
 ![Screenshot](/Screenshot.png?raw=true "Screenshot")
 
